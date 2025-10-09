@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+
+  wishlist-service:
+    build: .
+    ports:
+      - "8000:8080"
+    environment:
+      - DATABASE_URL=postgresql://user:password@wishlist-db:5432/wishlist_db
+    depends_on:
+      - wishlist-db
+    volumes:
+      - .:/app
+
+  
+  wishlist-db:
+    image: postgres:13
+    environment:
+      - POSTGRES_DB=wishlist_db
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+    ports:
+      - "5432:5432" 
+    volumes:
+      - postgres_data:/var/lib/postgresql/data 
+
+volumes:
+  postgres_data:
