@@ -1,18 +1,14 @@
-from sqlmodel import SQLModel, create_engine, Session
 import os
 from dotenv import load_dotenv
 
 load_dotenv()
 
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:password@localhost:5432/wishlist_db")
+# Database Configuration
+DATABASE_URL = os.getenv("DATABASE_URL")
+SECRET_KEY = os.getenv("SECRET_KEY", "fallback-secret-key")
+DEBUG = os.getenv("DEBUG", "False").lower() == "true"
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
 
-engine = create_engine(DATABASE_URL)
-
-def create_db_and_tables():
-
-    SQLModel.metadata.create_all(engine)
-
-def get_session():
-
-    with Session(engine) as session:
-        yield session
+# Application Configuration
+PROJECT_NAME = "Wishlist Service"
+API_V1_STR = "/api/v1"
