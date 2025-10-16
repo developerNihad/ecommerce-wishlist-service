@@ -34,3 +34,16 @@ EXPOSE 8080
 
 # Run migrations and start application
 CMD sh -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port \$PORT"
+
+# Copy entrypoint
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# Run as non-root user
+USER appuser
+
+# Expose port
+EXPOSE 8080
+
+# Entrypoint
+ENTRYPOINT ["/entrypoint.sh"]
