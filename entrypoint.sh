@@ -3,10 +3,11 @@ set -e
 
 echo "Starting FastAPI entrypoint..."
 
-if [ "$CLOUD_SQL_CONNECTION_NAME" ]; then
-  POSTGRES_HOST="/cloudsql/$CLOUD_SQL_CONNECTION_NAME"
-else
-  POSTGRES_HOST="${DB_HOST:-db}"
+# Skip DB wait for Cloud Run (Cloud SQL proxy handles connection)
+if [ "$K_SERVICE" ]; then
+  echo "Running on Cloud Run, skipping DB wait..."
+  alembic upgrade head
+  exec uvicorn app.main:app --host 0.0.0.0 --port ${PORT} --proxy-headers
 fi
 
 # Wait for Postgres

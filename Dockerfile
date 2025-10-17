@@ -5,7 +5,6 @@ FROM python:3.11-slim
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 ENV PIP_NO_CACHE_DIR=1
-ENV PORT 8080
 
 # Set working directory
 WORKDIR /app
@@ -25,25 +24,18 @@ RUN pip install -r requirements.txt
 # Copy entire project
 COPY . .
 
-# Create non-root user
-RUN useradd -m appuser && chown -R appuser:appuser /app
-USER appuser
-
-# Expose port for Cloud Run
-EXPOSE 8080
-
-# Run migrations and start application
-CMD sh -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port \$PORT"
-
-# Copy entrypoint
+# Copy entrypoint and make it executable
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-# Run as non-root user
+# Create non-root user and set permissions
+RUN useradd -m appuser && chown -R appuser:appuser /app && chown appuser:appuser /entrypoint.sh
+
+# Switch to non-root user
 USER appuser
 
 # Expose port
 EXPOSE 8080
 
-# Entrypoint
+# Use entrypoint
 ENTRYPOINT ["/entrypoint.sh"]
