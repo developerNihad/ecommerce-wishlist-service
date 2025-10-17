@@ -4,7 +4,8 @@ from app.database import create_db_and_tables
 from app.config import PROJECT_NAME, API_V1_STR
 from app.api.v1.endpoints import wishlist
      
-     
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup: Create database tables
