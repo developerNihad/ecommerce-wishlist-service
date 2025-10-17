@@ -1,5 +1,6 @@
 import asyncio
 from logging.config import fileConfig
+import os
 
 from sqlalchemy import pool
 from sqlalchemy.engine import Connection
@@ -77,10 +78,15 @@ async def run_async_migrations() -> None:
     await connectable.dispose()
 
 
-def run_migrations_online() -> None:
-    """Run migrations in 'online' mode."""
-
-    asyncio.run(run_async_migrations())
+def run_migrations_online():
+    # Get URL from environment variable, fallback to alembic.ini
+    url = os.getenv("DATABASE_URL") or config.get_main_option("sqlalchemy.url")
+    
+    connectable = async_engine_from_config(
+        {"sqlalchemy.url": url},  # Use the URL from env
+        prefix="sqlalchemy.",
+        poolclass=pool.NullPool,
+    )
 
 
 if context.is_offline_mode():
