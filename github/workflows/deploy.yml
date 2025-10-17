@@ -39,11 +39,14 @@ jobs:
       - name: Deploy to Cloud Run
         run: |
           gcloud run deploy wishlist-service-ecommerce \
-            --image $IMAGE \
-            --platform managed \
-            --region europe-west1 \
+            --source . \
+            --region=europe-west1 \
+            --add-cloudsql-instances=smart-acrobat-474814-a2:europe-west1:wishlist-service \
+            --set-env-vars="DATABASE_URL=postgresql+asyncpg://postgres:MySecurePass2024!@/wishlist_db?host=/cloudsql/smart-acrobat-474814-a2:europe-west1:wishlist-service,SECRET_KEY=5e2a977317aea53f39a6f5b95b85ab36" \
             --allow-unauthenticated \
-            --set-env-vars \
+            --max-instances=3 \
+            --timeout=300 \
+            --project=smart-acrobat-474814-a2
 
             
 DATABASE_URL=${{ secrets.DATABASE_URL }},\
