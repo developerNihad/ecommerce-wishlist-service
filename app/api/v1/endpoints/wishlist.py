@@ -75,8 +75,8 @@ def remove_from_wishlist(
 @router.get("/wishlist/count/{user_id}")
 def get_wishlist_count(user_id: int, session: Session = Depends(get_session)):
     """Get count of items in user's wishlist"""
-    count = session.exec(
+    wishlist_items = session.exec(
         select(Wishlist).where(Wishlist.user_id == user_id)
     ).all()
     
-    return {"user_id": user_id, "wishlist_count": len(count)}
+    return {"user_id": user_id, "wishlist_count": len(wishlist_items)}

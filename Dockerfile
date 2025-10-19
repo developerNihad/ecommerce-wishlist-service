@@ -1,5 +1,5 @@
 # Use Python slim image
-FROM python:3.11-slim
+FROM python:3.12-slim
 
 # Environment variables
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -14,6 +14,7 @@ RUN apt-get update && apt-get install -y \
     postgresql-client \
     gcc \
     python3-dev \
+    libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements and install dependencies

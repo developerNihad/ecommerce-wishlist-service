@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/bash
 set -e
 
 echo "Starting FastAPI entrypoint..."
@@ -7,8 +7,13 @@ echo "Starting FastAPI entrypoint..."
 if [ -n "$K_SERVICE" ]; then
   echo "Running on Cloud Run..."
   
-  # SKIP MIGRATIONS - Run them separately via Cloud Run Jobs
-  # This ensures the container starts quickly and passes health checks
+  # Wait for Cloud SQL proxy to be ready
+  echo "Waiting for Cloud SQL connection..."
+  sleep 5
+  
+  # Run migrations on Cloud Run startup
+  echo "Running migrations..."
+  alembic upgrade head || { echo "Migration failed!"; exit 1; }
   
   echo "Starting uvicorn on port ${PORT:-8080}..."
   exec uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8080} --proxy-headers
