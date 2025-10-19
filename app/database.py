@@ -2,12 +2,15 @@ from sqlmodel import SQLModel, create_engine, Session
 from app.config import DATABASE_URL
 import os
 
-# Database Engine - Use asyncpg for Cloud SQL
-if DATABASE_URL and "asyncpg" not in DATABASE_URL:
-    # Convert psycopg2 URL to asyncpg if needed
-    DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://")
+# Database Engine - Use psycopg2 for migrations, asyncpg for runtime
+if DATABASE_URL and "asyncpg" in DATABASE_URL:
+    # Convert asyncpg URL to psycopg2 for migrations
+    migration_url = DATABASE_URL.replace("postgresql+asyncpg://", "postgresql://")
+else:
+    migration_url = DATABASE_URL
 
-engine = create_engine(DATABASE_URL, echo=False, pool_pre_ping=True, pool_recycle=300)
+# Use psycopg2 for migrations and general database operations
+engine = create_engine(migration_url, echo=False, pool_pre_ping=True, pool_recycle=300)
 
 def create_db_and_tables():
     """Create all database tables"""

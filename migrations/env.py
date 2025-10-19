@@ -1,10 +1,8 @@
-import asyncio
 from logging.config import fileConfig
 import os
 
 from sqlalchemy import pool
 from sqlalchemy.engine import Connection
-from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from alembic import context
 
@@ -60,38 +58,19 @@ def do_run_migrations(connection: Connection) -> None:
         context.run_migrations()
 
 
-async def run_async_migrations() -> None:
-    """In this scenario we need to create an Engine
-    and associate a connection with the context.
-
-    """
-
-    connectable = async_engine_from_config(
-        config.get_section(config.config_ini_section, {}),
-        prefix="sqlalchemy.",
-        poolclass=pool.NullPool,
-    )
-
-    async with connectable.connect() as connection:
-        await connection.run_sync(do_run_migrations)
-
-    await connectable.dispose()
+# Removed async migration function - using sync version instead
 
 
 def run_migrations_online():
     # Get URL from environment variable, fallback to alembic.ini
     url = os.getenv("DATABASE_URL") or config.get_main_option("sqlalchemy.url")
     
-    connectable = async_engine_from_config(
-        {"sqlalchemy.url": url},  # Use the URL from env
-        prefix="sqlalchemy.",
-        poolclass=pool.NullPool,
-    )
+    # Use sync engine for migrations
+    from sqlalchemy import create_engine
+    connectable = create_engine(url)
 
-    async with connectable.connect() as connection:
-        await connection.run_sync(do_run_migrations)
-
-    await connectable.dispose()
+    with connectable.connect() as connection:
+        do_run_migrations(connection)
 
 
 if context.is_offline_mode():
