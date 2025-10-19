@@ -42,7 +42,7 @@ jobs:
             --image $IMAGE \
             --region=europe-west1 \
             --add-cloudsql-instances=${{ secrets.CLOUD_SQL_CONNECTION_NAME }} \
-            --set-env-vars="DATABASE_URL=${{ secrets.DATABASE_URL }},SECRET_KEY=${{ secrets.SECRET_KEY }},DEBUG=False,ALLOWED_HOSTS=*" \
+            --set-env-vars="DATABASE_URL=${{ secrets.DATABASE_URL }},SECRET_KEY=${{ secrets.SECRET_KEY }},DEBUG=False,ALLOWED_HOSTS=*,CLOUD_SQL_CONNECTION_NAME=${{ secrets.CLOUD_SQL_CONNECTION_NAME }}" \
             --allow-unauthenticated \
             --max-instances=3 \
             --timeout=300 \

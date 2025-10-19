@@ -40,6 +40,11 @@ def run_migrations_offline() -> None:
 
     """
     url = config.get_main_option("sqlalchemy.url")
+    
+    # Ensure we use psycopg2 for migrations (not asyncpg)
+    if url and "asyncpg" in url:
+        url = url.replace("postgresql+asyncpg://", "postgresql://")
+    
     context.configure(
         url=url,
         target_metadata=target_metadata,
@@ -64,6 +69,10 @@ def do_run_migrations(connection: Connection) -> None:
 def run_migrations_online():
     # Get URL from environment variable, fallback to alembic.ini
     url = os.getenv("DATABASE_URL") or config.get_main_option("sqlalchemy.url")
+    
+    # Ensure we use psycopg2 for migrations (not asyncpg)
+    if url and "asyncpg" in url:
+        url = url.replace("postgresql+asyncpg://", "postgresql://")
     
     # Use sync engine for migrations
     from sqlalchemy import create_engine

@@ -13,6 +13,8 @@ if [ -n "$K_SERVICE" ]; then
   
   # Run migrations on Cloud Run startup
   echo "Running migrations..."
+  # Set DATABASE_URL to use psycopg2 for migrations
+  export DATABASE_URL=$(echo $DATABASE_URL | sed 's/postgresql+asyncpg:/postgresql:/')
   alembic upgrade head || { echo "Migration failed!"; exit 1; }
   
   echo "Starting uvicorn on port ${PORT:-8080}..."
@@ -39,6 +41,8 @@ else
 
   # Run migrations locally
   echo "Running migrations..."
+  # Set DATABASE_URL to use psycopg2 for migrations
+  export DATABASE_URL=$(echo $DATABASE_URL | sed 's/postgresql+asyncpg:/postgresql:/')
   alembic upgrade head || { echo "Migration failed!"; exit 1; }
 
   # Start FastAPI
