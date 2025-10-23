@@ -1,28 +1,19 @@
-name: CI Pipeline
+name: Notify Main Repo
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
-  test:
+  notify:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v2
-
-      - name: Set up Python
-        uses: actions/setup-python@v2
+      - name: Send update notification to CI/CD repo
+        uses: peter-evans/repository-dispatch@v2
         with:
-          python-version: '3.12'
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-
-      - name: Run tests
-        run: |
-          pytest || echo "No tests found, skipping..."
-
+          token: ${{ secrets.MAIN_REPO_PAT }}
+          repository: developerNihad/ecommerce-wishlist-service
+          event-type: update-wishlist-service
+          client-payload: '{"service": "wishlist", "ref": "${{ github.ref }}", "sha": "${{ github.sha }}"}'
