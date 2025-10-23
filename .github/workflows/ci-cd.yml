@@ -17,3 +17,4 @@ jobs:
           repository: developerNihad/ecommerce-wishlist-service
           event-type: update-wishlist-service
           client-payload: '{"service": "wishlist", "ref": "${{ github.ref }}", "sha": "${{ github.sha }}"}'
+
